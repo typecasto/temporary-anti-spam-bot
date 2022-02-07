@@ -11,14 +11,12 @@ use serenity::{
 // use chrono::prelude::*;
 use serenity::utils::MessageBuilder;
 
-#[macro_use]
-extern crate dotenv_codegen;
 
 // const OWNER_ID: UserId = UserId(323262113873264660); // ICoE
 // const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
 // const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973); // ok.testing
 
-const OWNER_ID: UserId = UserId(dotenv!()); // @typecasto#0517
+const OWNER_ID: UserId = UserId(134509976956829697); // @typecasto#0517
 const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
 const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
 
