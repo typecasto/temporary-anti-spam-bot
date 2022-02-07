@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+    temporary-anti-spam-bot:
+        build: ./
+        working_dir: /app
+        # restart: always
+        restart: never
