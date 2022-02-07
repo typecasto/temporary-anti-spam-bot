@@ -11,3 +11,6 @@
 
 # Editor stuff
 /.idea/
+
+#environment
+/.env
