@@ -1,8 +1,6 @@
 use std::env;
 
-use serenity::model::guild::PartialGuild;
 use serenity::model::id::{ChannelId, UserId};
-use serenity::model::prelude::{GuildId, Interaction, InteractionResponseType};
 
 use serenity::{
     async_trait,
@@ -13,32 +11,14 @@ use serenity::{
 // use chrono::prelude::*;
 use serenity::utils::MessageBuilder;
 
+
+// const OWNER_ID: UserId = UserId(323262113873264660); // ICoE
+// const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
+// const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973); // ok.testing
+
 const OWNER_ID: UserId = UserId(134509976956829697); // @typecasto#0517
-                                                     // const OWNER_ID: UserId = UserId(323262113873264660); // ICoE
-                                                     // const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
-const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
-const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973);
-
-// const KICK_TEXT: &'static str =
-//     "*Now you've done it...*\n\n\
-//     You posted in #post-here-to-get-kicked, and got kicked.\n\
-//     The reason for this channel's existence is to combat spambots that post the same message in every channel.\n\
-//     If you didn't intentionally post in that chat, :warning: **CHANGE YOUR PASSWORD NOW.** :warning:\n\
-//     If you did intentionally post in that chat (why?), skip to step 3 below.\n\
-//     You've probably been hacked, and the hacker posted sketchy links in every channel they had access to.\n\
-//     You may want to go through your recent DMs and delete any sketchy links coming from your account.\n\n\
-//     To regain access to the server:\n\
-//     1. Enable 2FA on your account. (optional, but highly recommended)\n\
-//     2. Change your password.\n\
-//     3. Click the blue button below that says \"Send me an invite\" (any other invites won't work, as you're currently banned)\n\
-//     4. Join the server\n\
-//     5. If you care about your XP, find the last time you ranked up (search is nice for this) and send a link to it in #suggestions with a message about how you want your xp back.";
-
-// const LOG_TEXT: &'static str = "--- Spambot Kicked ---\n\
-//     Username: `{}#{}`\n\
-//     ID: `{}`\n\
-//     Date: `<t:{}:f>`\n\
-//     Original message text: \n{}";
+const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
+const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
 
 async fn generate_kick_private_message(message: &Message, ctx: &Context) -> String {
     let guild_name = &message
