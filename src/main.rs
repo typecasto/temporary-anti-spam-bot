@@ -13,12 +13,12 @@ use serenity::utils::MessageBuilder;
 
 
 // const OWNER_ID: UserId = UserId(323262113873264660); // ICoE
-// const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
-// const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973); // ok.testing
+const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
+const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973); // ok.testing
 
 const OWNER_ID: UserId = UserId(134509976956829697); // @typecasto#0517
-const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
-const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
+// const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
+// const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
 
 async fn generate_kick_private_message(message: &Message, ctx: &Context) -> String {
     let guild_name = &message

@@ -5,4 +5,4 @@ services:
         build: ./
         working_dir: /app
         # restart: always
-        restart: never
+        restart: unless-stopped
