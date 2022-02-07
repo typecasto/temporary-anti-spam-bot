@@ -130,60 +130,60 @@ impl EventHandler for Handler {
         println!("{} is connected and ready to go.", ready.user.name)
     }
 
-    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        dbg!(&interaction);
-        match interaction {
-            Interaction::Ping(_) => {}
-            Interaction::MessageComponent(component_interaction) => {
-                match &component_interaction.data.custom_id {
-                    unban_string if unban_string.starts_with("unban_from: ") => {
-                        // println!("We're unbanning with string {}", unban_string);
+    // async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+    //     dbg!(&interaction);
+    //     match interaction {
+    //         Interaction::Ping(_) => {}
+    //         Interaction::MessageComponent(component_interaction) => {
+    //             match &component_interaction.data.custom_id {
+    //                 unban_string if unban_string.starts_with("unban_from: ") => {
+    //                     // println!("We're unbanning with string {}", unban_string);
 
-                        let id = GuildId(
-                            unban_string
-                                .strip_prefix("unban_from: ")
-                                .unwrap()
-                                .parse::<u64>()
-                                .expect("failed to parse guildid"),
-                        );
+    //                     let id = GuildId(
+    //                         unban_string
+    //                             .strip_prefix("unban_from: ")
+    //                             .unwrap()
+    //                             .parse::<u64>()
+    //                             .expect("failed to parse guildid"),
+    //                     );
 
-                        let pg: PartialGuild = PartialGuild::get(&ctx.http, id).await.unwrap();
+    //                     let pg: PartialGuild = PartialGuild::get(&ctx.http, id).await.unwrap();
 
-                        match pg.bans(&ctx.http).await {
-                            Ok(bans) => {
-                                for ban in bans {
-                                    if ban.user.id == component_interaction.user.id {
-                                        if ban.reason.unwrap_or("".to_string()).contains("Spambot")
-                                        {
-                                            &pg.unban(&ctx.http, &ban.user.id);
-                                        }
-                                    }
-                                }
-                            }
-                            Err(why) => {
-                                eprintln!("ERROR: {}", why)
-                            } // user was unbanned already, and guild has no other bans?
-                        }
+    //                     match pg.bans(&ctx.http).await {
+    //                         Ok(bans) => {
+    //                             for ban in bans {
+    //                                 if ban.user.id == component_interaction.user.id {
+    //                                     if ban.reason.unwrap_or("".to_string()).contains("Spambot")
+    //                                     {
+    //                                         &pg.unban(&ctx.http, &ban.user.id);
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                         Err(why) => {
+    //                             eprintln!("ERROR: {}", why)
+    //                         } // user was unbanned already, and guild has no other bans?
+    //                     }
 
-                        // done with response, send back to server
-                        &component_interaction
-                            .create_interaction_response(&ctx.http, |response| {
-                                response
-                                    .kind(InteractionResponseType::UpdateMessage)
-                                    .interaction_response_data(|x| x)
-                            })
-                            .await;
-                    }
-                    _ => {
-                        eprintln!("ERROR: Reached _ pattern in MessageComponent.")
-                    }
-                }
-            }
-            Interaction::ApplicationCommand(_command_interaction) => {
-                // do something here later
-            }
-        }
-    }
+    //                     // done with response, send back to server
+    //                     &component_interaction
+    //                         .create_interaction_response(&ctx.http, |response| {
+    //                             response
+    //                                 .kind(InteractionResponseType::UpdateMessage)
+    //                                 .interaction_response_data(|x| x)
+    //                         })
+    //                         .await;
+    //                 }
+    //                 _ => {
+    //                     eprintln!("ERROR: Reached _ pattern in MessageComponent.")
+    //                 }
+    //             }
+    //         }
+    //         Interaction::ApplicationCommand(_command_interaction) => {
+    //             // do something here later
+    //         }
+    //     }
+    // }
 }
 
 #[tokio::main]
