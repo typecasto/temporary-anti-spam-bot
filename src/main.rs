@@ -128,14 +128,17 @@ impl EventHandler for Handler {
         }
     }
 
+
     // Fired when bot is ready
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected and ready to go.", ready.user.name)
+
     }
 }
 
 #[tokio::main]
 async fn main() {
+    println!("Starting {} v{}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
     dotenv::dotenv().ok();
     // Token from environment
     let token = env::var("DISCORD_TOKEN")
