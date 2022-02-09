@@ -103,6 +103,7 @@ impl EventHandler for Handler {
                 .ban_with_reason(&ctx.http, &new_message.author.id, 1, "Spambot (autobanned)")
                 .await
             {
+                eprintln!("Failed to ban user, perms issue?");
                 return; // can't ban this user, return.
             }
             let _ = guild.unban(&ctx.http, &new_message.author.id).await;
