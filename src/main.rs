@@ -8,9 +8,7 @@ use serenity::{
     prelude::*,
 };
 
-// use chrono::prelude::*;
 use serenity::utils::MessageBuilder;
-
 
 // const OWNER_ID: UserId = UserId(323262113873264660); // ICoE
 // const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
