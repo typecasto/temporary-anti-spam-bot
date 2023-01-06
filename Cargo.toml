@@ -10,4 +10,4 @@ dotenv = "0.15.0"
 dotenv_codegen = "0.15.0"
 futures = "0.3.19"
 serenity = { version = "0.10.9", default-features = false, features = ["builder", "cache", "client", "gateway", "http", "model", "utils", "rustls_backend", "unstable_discord_api"] }
-tokio = { version = "1.13.1", features = ["full"] }
+tokio = { version = "1.20.3", features = ["full"] }
