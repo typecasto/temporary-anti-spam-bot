@@ -71,7 +71,11 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, new_message: Message) {
         // Stage 1: Detect
         // Return if the message is in a different channel, or by a member of a protected role
-        if new_message.channel_id != KICK_CHANNEL || new_message.author.id == OWNER_ID {
+        // or a bot
+        if new_message.channel_id != KICK_CHANNEL
+            || new_message.author.id == OWNER_ID
+            || new_message.author.bot
+        {
             // FEATURE: check for list of roles, rather than hardcoded ID
             return;
         }
@@ -126,17 +130,19 @@ impl EventHandler for Handler {
         }
     }
 
-
     // Fired when bot is ready
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected and ready to go.", ready.user.name)
-
     }
 }
 
 #[tokio::main]
 async fn main() {
-    println!("Starting {} v{}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+    println!(
+        "Starting {} v{}",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_VERSION")
+    );
     dotenv::dotenv().ok();
     // Token from environment
     let token = env::var("DISCORD_TOKEN")
