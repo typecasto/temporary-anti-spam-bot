@@ -101,7 +101,7 @@ impl EventHandler for Handler {
 
         // Stage 3: Ban
         // Ban them, deleting 1 day of messages and kicking them, then unban them.
-        if let Some(guild) = &new_message.guild(&ctx.cache).await {
+        if let Some(guild) = &new_message.guild_id {
             if let Err(e) = guild
                 .ban_with_reason(&ctx.http, &new_message.author.id, 1, "Spambot (autobanned)")
                 .await

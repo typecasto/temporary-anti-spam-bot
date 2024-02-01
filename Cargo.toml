@@ -8,6 +8,5 @@ edition = "2018"
 [dependencies]
 dotenvy = "0.15.0"
 futures = "0.3.19"
-# serenity = { version = "0.10.9", default-features = false, features = ["builder", "cache", "client", "gateway", "http", "model", "utils", "rustls_backend", "unstable_discord_api"] }
-serenity = { version = "0.10.9", default-features = true}
+serenity = { version = "0.10.9", default-features = false, features = ["builder", "cache", "client", "gateway", "http", "model", "utils", "rustls_backend"] }
 tokio = { version = "1.20.4", features = ["full"] }
