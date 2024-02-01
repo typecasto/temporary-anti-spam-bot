@@ -151,11 +151,11 @@ async fn main() {
     // obvious hack is obvious
     let discord_token = env::var("DISCORD_TOKEN")
         .expect("Expected a discord token from environment variable $DISCORD_TOKEN.");
-    let bot_id = env::var("BOT_ID")
-        .expect("Expected a discord token from environment variable $BOT_ID.")
-        .parse::<u64>()
-        .expect("Couldn't parse BOT_ID correctly.")
-        .into();
+    // let bot_id = env::var("BOT_ID")
+    //     .expect("Expected a discord token from environment variable $BOT_ID.")
+    //     .parse::<u64>()
+    //     .expect("Couldn't parse BOT_ID correctly.")
+    //     .into();
     let owner_id = env::var("OWNER_ID")
         .expect("Expected a discord token from environment variable $OWNER_ID.")
         .parse::<u64>()
@@ -177,10 +177,11 @@ async fn main() {
             kick_channel,
             log_channel,
             owner_id
-        })
-        .application_id(bot_id)
-        .await
-        .expect("bot create error.");
+        }).await.expect("Couldn't build bot.");
+        // .application_id(bot_id)
+        
+        // .await
+        // .expect("bot create error.");
 
     // Start bot
     if let Err(error) = client.start().await {
