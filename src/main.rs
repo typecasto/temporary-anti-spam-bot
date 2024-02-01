@@ -1,10 +1,12 @@
 use std::env;
 
-use serenity::model::id::{ChannelId, UserId};
-
 use serenity::{
     async_trait,
-    model::{channel::Message, gateway::Ready},
+    model::{
+        channel::Message,
+        gateway::Ready,
+        id::{ChannelId, UserId},
+    },
     prelude::*,
 };
 
@@ -14,9 +16,9 @@ use serenity::utils::MessageBuilder;
 // const KICK_CHANNEL: ChannelId = ChannelId(889360426998046780); // ok.testing
 // const LOG_CHANNEL: ChannelId = ChannelId(923761835583352973); // ok.testing
 
-const OWNER_ID: UserId = UserId(134509976956829697); // @typecasto#0517
-const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
-const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
+// const OWNER_ID: UserId = UserId(134509976956829697); // @typecasto#0517
+// const KICK_CHANNEL: ChannelId = ChannelId(888501834312986635); // yuzu piracy
+// const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
 
 async fn generate_kick_private_message(message: &Message, ctx: &Context) -> String {
     let guild_name = &message
@@ -64,16 +66,21 @@ fn generate_kick_log_message(message: &Message, could_pm: bool) -> String {
         .build()
 }
 
-struct Handler;
+struct Handler {
+    kick_channel: ChannelId,
+    log_channel: Option<ChannelId>,
+    owner_id: UserId,
+    // guild_id: GuildId,
+    // exempt_roles: Vec<RoleId>,
+}
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, new_message: Message) {
         // Stage 1: Detect
-        // Return if the message is in a different channel, or by a member of a protected role
-        // or a bot
-        if new_message.channel_id != KICK_CHANNEL
-            || new_message.author.id == OWNER_ID
+        // Duck out early if this isn't something we should handle
+        if new_message.channel_id != self.kick_channel
+            || new_message.author.id == self.owner_id
             || new_message.author.bot
         {
             // FEATURE: check for list of roles, rather than hardcoded ID
@@ -83,11 +90,8 @@ impl EventHandler for Handler {
 
         // Stage 2: Warn
         // Send them a private message
-        // new_message.author.create_dm_channel(&ctx.http).await
-        //     .and_then(|c| c.send_message(&ctx.http, |create_message| async move {
-        //         create_message.content(generate_kick_private_message(&new_message, &ctx).await)
-        //     }.await
-        //     ));
+        // unfortunately we can't do this after we're sure we can ban them, since after we do that
+        // we no longer share a server with them.
         let could_private_message;
         let private_message_text = generate_kick_private_message(&new_message, &ctx).await;
         if let Ok(dm_channel) = new_message.author.create_dm_channel(&ctx.http).await {
@@ -117,7 +121,10 @@ impl EventHandler for Handler {
 
         // Stage 4: Log
         // Send a log message, simple.
-        if let Some(log_channel) = &ctx.cache.guild_channel(LOG_CHANNEL).await {
+        if let Some(log_channel) = self.log_channel {
+            let Some(log_channel) = &ctx.cache.guild_channel(log_channel).await else {
+                return;
+            };
             log_channel
                 .say(
                     &ctx.http,
@@ -125,8 +132,6 @@ impl EventHandler for Handler {
                 )
                 .await
                 .expect("Failed to send log message.");
-        } else {
-            eprintln!("Failed to find log channel.")
         }
     }
 
@@ -143,15 +148,40 @@ async fn main() {
         env!("CARGO_PKG_NAME"),
         env!("CARGO_PKG_VERSION")
     );
-    dotenv::dotenv().ok();
-    // Token from environment
-    let token = env::var("DISCORD_TOKEN")
+    let _ = dotenvy::dotenv();
+
+    // Config from environment
+    // obvious hack is obvious
+    let discord_token = env::var("DISCORD_TOKEN")
         .expect("Expected a discord token from environment variable $DISCORD_TOKEN.");
+    let bot_id = env::var("BOT_ID")
+        .expect("Expected a discord token from environment variable $BOT_ID.")
+        .parse::<u64>()
+        .expect("Couldn't parse BOT_ID correctly.")
+        .into();
+    let owner_id = env::var("OWNER_ID")
+        .expect("Expected a discord token from environment variable $OWNER_ID.")
+        .parse::<u64>()
+        .expect("Couldn't parse OWNER_ID correctly.")
+        .into();
+    let kick_channel = env::var("KICK_CHANNEL")
+        .expect("Expected a discord token from environment variable $KICK_CHANNEL.")
+        .parse::<u64>()
+        .expect("Couldn't parse KICK_CHANNEL correctly.")
+        .into();
+    let log_channel = env::var("LOG_CHANNEL")
+        .ok()
+        .map(|x| x.parse::<u64>().expect("Couldn't parse LOG_CHANNEL correctly."))
+        .map(Into::into);
 
     // Make bot
-    let mut client = Client::builder(&token)
-        .event_handler(Handler)
-        .application_id(888489827492827206)
+    let mut client = Client::builder(&discord_token)
+        .event_handler(Handler {
+            kick_channel,
+            log_channel,
+            owner_id
+        })
+        .application_id(bot_id)
         .await
         .expect("bot create error.");
 
