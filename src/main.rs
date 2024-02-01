@@ -43,15 +43,14 @@ async fn generate_kick_private_message(message: &Message, ctx: &Context) -> Stri
 fn generate_kick_log_message(message: &Message, could_pm: bool) -> String {
     /*
     --- Spambot Kicked ---
-    Username: `User#1234`
+    Username: `typecasto`
     ID: `10203040506`
     Sent a PM: No
-    Date: <t:1641780709:f>
+    Avatar: https://example.com/avatar.png
      */
     MessageBuilder::new()
         .push_line("--- Spambot Kicked ---")
         .push("Username: ")
-        // .push_mono_line(format!("{}#{:0>4}", &message.author.name, &message.author.discriminator))
         .push_mono_line(&message.author.tag())
         .push("ID: ")
         .push_mono_line(&message.author.id)
@@ -60,9 +59,6 @@ fn generate_kick_log_message(message: &Message, could_pm: bool) -> String {
             if could_pm { "Yes" } else { "No" }
         ))
         .push_line(format!("Avatar: {}", &message.author.face()))
-        // .push_line(format!("Date: <t:{}:f>", &Utc::now().timestamp()))
-        // .push_line("Original message:")
-        // .push_safe(&message.content.replace("://", " : "))
         .build()
 }
 
@@ -114,6 +110,7 @@ impl EventHandler for Handler {
                 eprintln!("{:?}", e);
                 return; // can't ban this user, return.
             }
+            // todo? add a failsafe to DM the owner in case it fails to unban someone for some reason
             let _ = guild.unban(&ctx.http, &new_message.author.id).await;
         } else {
             eprintln!("Failed to find guild.")
