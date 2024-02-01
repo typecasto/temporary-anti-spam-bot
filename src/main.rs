@@ -21,16 +21,15 @@ use serenity::utils::MessageBuilder;
 // const LOG_CHANNEL: ChannelId = ChannelId(923753624427982898);
 
 async fn generate_kick_private_message(message: &Message, ctx: &Context) -> String {
-    let guild_name = &message
-        .guild(&ctx.cache)
-        .await
-        .and_then(|g| Some(g.name))
-        .or(Some(String::from("an unknown guild")))
-        .unwrap(); // Either there is a string here or I've done something terribly wrong
+    let name = if let Some(guild) = message.guild_id {
+        guild.name(&ctx.cache).await
+    } else {None}
+        .unwrap_or("an unknown guild".to_string());
+        // .unwrap(); // Either there is a string here or I've done something terribly wrong
     MessageBuilder::new()
         .push_line(format!(
             "You've been kicked from {} for being a suspected spambot.",
-            guild_name
+            name
         ))
         .push_line("Feel free to rejoin once you've secured your account.")
         // .push_line("You may want to check your recent DMs, to see if your account has sent any sketchy links.")
