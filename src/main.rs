@@ -22,7 +22,7 @@ use serenity::utils::MessageBuilder;
 
 async fn generate_kick_private_message(message: &Message, ctx: &Context) -> String {
     let name = if let Some(guild) = message.guild_id {
-        guild.name(&ctx.cache).await
+        guild.to_partial_guild(&ctx.http).await.ok().map(|x| x.name)
     } else {None}
         .unwrap_or("an unknown guild".to_string());
         // .unwrap(); // Either there is a string here or I've done something terribly wrong
